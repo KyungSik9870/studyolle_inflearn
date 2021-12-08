@@ -16,6 +16,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.inflearn.kyungsik.studyolle_inflearn.domain.Account;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class AccountControllerTest {
@@ -38,6 +40,19 @@ class AccountControllerTest {
 			.andExpect(model().attributeExists("signUpForm"));
 	}
 
+	@DisplayName("회원 가입 - 입력값 오류")
+	@Test
+	void signUpSubmit_with_wrong_input() throws Exception {
+		mockMvc.perform(
+			post("/sign-up")
+				.param("nickname", "kyungsik")
+				.param("email", "kyungcom")
+				.param("password", "1234")
+				.with(csrf())
+		).andExpect(status().isOk())
+			.andExpect(view().name("account/sign-up"));
+	}
+
 	@DisplayName("회원 가입 - 입력값 정상")
 	@Test
 	void signUpSubmit_with_right_input() throws Exception {
@@ -50,21 +65,10 @@ class AccountControllerTest {
 		).andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/"));
 
+		Account account = accountRepository.findByEmail("kyungsik@naver.com");
+		assertThat(account.getPassword()).isNotEqualTo("12345678");
+
 		assertThat(accountRepository.existsByEmail("kyungsik@naver.com")).isTrue();
 		then(javaMailSender).should().send(any(SimpleMailMessage.class));
-	}
-
-	@DisplayName("회원 가입 - 입력값 오류")
-	@Test
-	void signUpSubmit_with_wrong_input() throws Exception {
-		mockMvc.perform(
-			post("/sign-up")
-				.param("nickname", "kyungsik")
-				.param("email", "kyungcom")
-				.param("password", "1234")
-				.with(csrf())
-		).andExpect(status().isOk())
-			.andExpect(view().name("account/sign-up"));
-
 	}
 }
