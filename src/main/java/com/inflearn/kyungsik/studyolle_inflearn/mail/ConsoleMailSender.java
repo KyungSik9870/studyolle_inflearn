@@ -1,4 +1,4 @@
-package com.inflearn.kyungsik.studyolle_inflearn;
+package com.inflearn.kyungsik.studyolle_inflearn.mail;
 
 import java.io.InputStream;
 
