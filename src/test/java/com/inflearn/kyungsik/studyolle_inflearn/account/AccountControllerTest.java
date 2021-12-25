@@ -3,6 +3,7 @@ package com.inflearn.kyungsik.studyolle_inflearn.account;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -83,7 +84,8 @@ class AccountControllerTest {
 			.param("email", "email@email.com"))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("error"))
-			.andExpect(view().name("account/checked-email"));
+			.andExpect(view().name("account/checked-email"))
+			.andExpect(unauthenticated());
 	}
 
 	@DisplayName("인증 메일 확인 - 입력값 정상")
@@ -105,6 +107,7 @@ class AccountControllerTest {
 			.andExpect(model().attributeDoesNotExist("error"))
 			.andExpect(model().attributeExists("nickname"))
 			.andExpect(model().attributeExists("numberOfUser"))
-			.andExpect(view().name("account/checked-email"));
+			.andExpect(view().name("account/checked-email"))
+			.andExpect(authenticated().withUsername("kyungsik"));
 	}
 }
