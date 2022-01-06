@@ -31,19 +31,7 @@ public class AccountService {
 		return newAccount;
 	}
 
-	private Account saveNewAccount(SignUpForm signUpForm) {
-		Account account = Account.builder()
-			.email(signUpForm.getEmail())
-			.nickname(signUpForm.getNickname())
-			.password(passwordEncoder.encode(signUpForm.getPassword()))
-			.studyCreatedByWeb(true)
-			.studyEnrollmentResultByWeb(true)
-			.studyUpdatedByWeb(true)
-			.build();
-		return accountRepository.save(account);
-	}
-
-	private void sendSignUpConfirmEmail(Account newAccount) {
+	public void sendSignUpConfirmEmail(Account newAccount) {
 		SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 		simpleMailMessage.setSubject("스터디올래, 회원 가입 인증");
 		simpleMailMessage.setText(
@@ -61,5 +49,17 @@ public class AccountService {
 			List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
 		SecurityContextHolder.getContext().setAuthentication(token);
+	}
+
+	private Account saveNewAccount(SignUpForm signUpForm) {
+		Account account = Account.builder()
+			.email(signUpForm.getEmail())
+			.nickname(signUpForm.getNickname())
+			.password(passwordEncoder.encode(signUpForm.getPassword()))
+			.studyCreatedByWeb(true)
+			.studyEnrollmentResultByWeb(true)
+			.studyUpdatedByWeb(true)
+			.build();
+		return accountRepository.save(account);
 	}
 }

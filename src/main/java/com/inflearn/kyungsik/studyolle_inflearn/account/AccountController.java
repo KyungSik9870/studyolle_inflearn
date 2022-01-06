@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.Valid;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -66,5 +67,24 @@ public class AccountController {
 		accountService.login(account);
 		return view;
 	}
+
+	@GetMapping("/check-email")
+	public String checkEmail(@AuthenticationPrincipal UserAccount account, Model model) {
+		model.addAttribute("email", account.getAccount().getEmail());
+		return "account/check-email";
+	}
+
+	@GetMapping("/resend-confirm-email")
+	public String resendConfirmEmail(@AuthenticationPrincipal UserAccount account, Model model) {
+		if (!account.getAccount().canSendConfirmEmail()) {
+			model.addAttribute("error", "인증 메일은 1시간에 한번만 전송할 수 있습니다.");
+			model.addAttribute("email",account.getAccount().getEmail());
+			return "account/check-email";
+		}
+
+		accountService.sendSignUpConfirmEmail(account.getAccount());
+		return "redirect:/";
+	}
+
 
 }
