@@ -11,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.inflearn.kyungsik.studyolle_inflearn.domain.Account;
@@ -86,5 +87,11 @@ public class AccountController {
 		return "redirect:/";
 	}
 
-
+	@GetMapping("/profile/{nickname}")
+	public String profile(@PathVariable String nickname, Model model, @AuthenticationPrincipal UserAccount account) {
+		Account accountToView = accountService.getAccount(nickname);
+		model.addAttribute(accountToView);
+		model.addAttribute("isOwner", accountToView.equals(account.getAccount()));
+		return "account/profile";
+	}
 }

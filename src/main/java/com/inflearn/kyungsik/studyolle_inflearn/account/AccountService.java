@@ -76,4 +76,15 @@ public class AccountService implements UserDetailsService {
 			.build();
 		return accountRepository.save(account);
 	}
+
+	public Account getAccount(String nickname) {
+		Account account = accountRepository.findByEmail(nickname);
+		if (account == null) {
+			account = accountRepository.findByNickname(nickname);
+		}
+		if (account == null) {
+			throw new UsernameNotFoundException(nickname);
+		}
+		return account;
+	}
 }
