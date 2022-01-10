@@ -19,6 +19,7 @@ import com.inflearn.kyungsik.studyolle_inflearn.domain.Account;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
 	private final JavaMailSender javaMailSender;
@@ -53,6 +54,7 @@ public class AccountService implements UserDetailsService {
 		SecurityContextHolder.getContext().setAuthentication(token);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public UserDetails loadUserByUsername(String emailOrNickname) throws UsernameNotFoundException {
 		Account account = accountRepository.findByEmail(emailOrNickname);
@@ -86,5 +88,10 @@ public class AccountService implements UserDetailsService {
 			throw new UsernameNotFoundException(nickname);
 		}
 		return account;
+	}
+
+	public void completeSignUp(Account account) {
+		account.completeSignUp();
+		login(account);
 	}
 }
